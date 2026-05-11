@@ -142,8 +142,8 @@ install_python_deps() {
 
   log_info "Installing Python packages with $PIP_PYTHON..."
   "$PIP_PYTHON" -m ensurepip --upgrade 2>/dev/null || true
-  "$PIP_PYTHON" -m pip install --user --upgrade pip setuptools wheel
-  "$PIP_PYTHON" -m pip install --user west pyelftools
+  "$PIP_PYTHON" -m pip install --user --break-system-packages --upgrade pip setuptools wheel
+  "$PIP_PYTHON" -m pip install --user --break-system-packages west pyelftools
 }
 
 # Download and extract toolchain
