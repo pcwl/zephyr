@@ -102,13 +102,13 @@ install_packages() {
       sudo apt install -y software-properties-common
       sudo add-apt-repository -y ppa:deadsnakes/ppa
       sudo apt update
-      sudo apt install -y python3.12 python3.12-venv python3.12-dev python3.12-distutils python3.12-ensurepip
+      sudo apt install -y python3.12 python3.12-venv python3.12-dev
     fi
   elif [[ -n "$AVAILABLE_PYTHON" && "$CURRENT_PYTHON_VERSION" -lt 12 ]]; then
     log_info "Found $AVAILABLE_PYTHON, will use it for building"
   fi
 
-  local packages="cmake ninja-build gperf ccache dfu-util device-tree-compiler python3-dev python3-pip python3-venv"
+  local packages="cmake ninja-build python3-pip python3-venv"
 
   if command -v apt >/dev/null 2>&1; then
     sudo apt update
@@ -177,16 +177,16 @@ configure_environment() {
   local env_vars="ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
 GNUARMEMB_TOOLCHAIN_PATH=\"$TOOLCHAIN_DIR/gcc-arm-none-eabi-10.3-2021.10\""
 
-  if ! grep -q "ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" "$BASHRC" 2>/dev/null; then
-    cat >> "$BASHRC" <<EOF
+  if ! grep -q "ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" ~/.profile 2>/dev/null; then
+    cat >> ~/.profile <<EOF
 
 # Zephyr ARM toolchain for STM32 (added by setup-zephyr-stm32.sh)
 export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
 export GNUARMEMB_TOOLCHAIN_PATH="$TOOLCHAIN_DIR/gcc-arm-none-eabi-10.3-2021.10"
 EOF
-    log_info "Appended environment variables to $BASHRC"
+    log_info "Appended environment variables to ~/.profile"
   else
-    log_info "Environment variables already present in $BASHRC"
+    log_info "Environment variables already present in ~/.profile"
   fi
 
   export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
