@@ -174,19 +174,18 @@ install_toolchain() {
 configure_environment() {
   log_info "Updating shell environment..."
 
-  local env_vars="ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-GNUARMEMB_TOOLCHAIN_PATH=\"$TOOLCHAIN_DIR/gcc-arm-none-eabi-10.3-2021.10\""
-
-  if ! grep -q "ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" ~/.profile 2>/dev/null; then
-    cat >> ~/.profile <<EOF
-
+  local env_block="
 # Zephyr ARM toolchain for STM32 (added by setup-zephyr-stm32.sh)
 export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-export GNUARMEMB_TOOLCHAIN_PATH="$TOOLCHAIN_DIR/gcc-arm-none-eabi-10.3-2021.10"
-EOF
-    log_info "Appended environment variables to ~/.profile"
+export GNUARMEMB_TOOLCHAIN_PATH=\"$TOOLCHAIN_DIR/gcc-arm-none-eabi-10.3-2021.10\"
+export PATH=\"\$HOME/.local/bin:\$HOME/arm-gcc/gcc-arm-none-eabi-10.3-2021.10/bin:\$PATH\"
+"
+
+  if ! grep -q "ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb" "$BASHRC" 2>/dev/null; then
+    echo "$env_block" >> "$BASHRC"
+    log_info "Appended environment variables to $BASHRC"
   else
-    log_info "Environment variables already present in ~/.profile"
+    log_info "Environment variables already present in $BASHRC"
   fi
 
   export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
@@ -248,16 +247,14 @@ main() {
   verify_build
 
   echo ""
+  echo ""
   echo "=========================================="
   echo -e "${GREEN}Setup complete!${NC}"
   echo "=========================================="
   echo ""
-  echo "To use in a new shell, run:"
-  echo "  source \"$BASHRC\""
-  echo ""
-  echo "Build STM32 projects with:"
+  echo "Open a NEW terminal, then build with:"
   echo "  cd $ZEHPHYR_REPO_DIR"
-  echo "  west build -b $ZEPHYR_BOARD <app-dir>"
+  echo "  west build -b nucleo_f446ze <app-dir>"
 }
 
 main
